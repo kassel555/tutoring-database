@@ -1,0 +1,5 @@
+# This directory is for storing CSV exports from Google Sheets
+# Place your exported files here:
+# - clients.csv
+# - payments.csv
+# - lessons.csv

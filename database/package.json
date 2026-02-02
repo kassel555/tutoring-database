@@ -1,0 +1,13 @@
+{
+  "name": "tutoring-database-migration",
+  "version": "1.0.0",
+  "description": "Migration script for tutoring database",
+  "main": "migration-script.js",
+  "scripts": {
+    "migrate": "node migration-script.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "csv-parser": "^3.0.0"
+  }
+}

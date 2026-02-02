@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutoring Database - Hours Management System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>💻 Tutoring Management System</h1>
+            <p class="subtitle">Hours-Based Client, Payment & Lesson Tracking</p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="clients">
+                👥 Clients
+            </button>
+            <button class="tab-btn" data-tab="payments">
+                💰 Payments
+            </button>
+            <button class="tab-btn" data-tab="lessons">
+                📚 Lessons
+            </button>
+            <button class="tab-btn" data-tab="reports">
+                📊 Reports
+            </button>
+        </nav>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Loading...</p>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message" class="error-message hidden"></div>
+
+        <!-- Success Message -->
+        <div id="success-message" class="success-message hidden"></div>
+
+        <!-- ============================================ -->
+        <!-- CLIENTS TAB -->
+        <!-- ============================================ -->
+        <div id="clients-tab" class="tab-content active">
+            <div class="section-header">
+                <h2>Clients</h2>
+                <button class="btn btn-primary" onclick="showAddClientForm()">
+                    + Add Client
+                </button>
+            </div>
+
+            <!-- Add/Edit Client Form -->
+            <div id="client-form" class="form-container hidden">
+                <h3 id="client-form-title">Add New Client</h3>
+                <form id="client-form-element" onsubmit="saveClient(event)">
+                    <input type="hidden" id="client-id">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="client-uid">UID *</label>
+                            <input type="text" id="client-uid" required placeholder="e.g., JAAN">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="client-full-name">Full Name *</label>
+                            <input type="text" id="client-full-name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="client-email">Email</label>
+                            <input type="email" id="client-email">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="client-telephone">Telephone</label>
+                            <input type="tel" id="client-telephone">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="client-status">Status</label>
+                            <select id="client-status">
+                                <option value="active">Active</option>
+                                <option value="retired">Retired</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="client-teacher">Teacher</label>
+                            <input type="text" id="client-teacher" value="Rahul">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="client-lead-source">Lead Source</label>
+                        <select id="client-lead-source">
+                            <option value="">Select...</option>
+                            <option value="bark">Bark</option>
+                            <option value="google">Google</option>
+                            <option value="referral">Referral</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="client-notes">Notes</label>
+                        <textarea id="client-notes" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Client</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideClientForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Search & Filter -->
+            <div class="search-bar">
+                <input type="text" id="client-search" placeholder="Search by name, UID, email, or phone..."
+                       oninput="filterClients()">
+                <select id="client-status-filter" onchange="filterClients()">
+                    <option value="">All Statuses</option>
+                    <option value="active">Active</option>
+                    <option value="retired">Retired</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+                <select id="client-teacher-filter" onchange="filterClients()">
+                    <option value="">All Teachers</option>
+                    <!-- Populated by JavaScript -->
+                </select>
+            </div>
+
+            <!-- Clients Table -->
+            <div class="table-container">
+                <table id="clients-table">
+                    <thead>
+                        <tr>
+                            <th>UID</th>
+                            <th>Full Name</th>
+                            <th>Status</th>
+                            <th>Hours Purchased</th>
+                            <th>Hours Used</th>
+                            <th>Hours Remaining</th>
+                            <th>Last Lesson</th>
+                            <th>Teacher</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clients-tbody">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- PAYMENTS TAB -->
+        <!-- ============================================ -->
+        <div id="payments-tab" class="tab-content">
+            <div class="section-header">
+                <h2>Payments</h2>
+                <button class="btn btn-primary" onclick="showAddPaymentForm()">
+                    + Add Payment
+                </button>
+            </div>
+
+            <!-- Add Payment Form -->
+            <div id="payment-form" class="form-container hidden">
+                <h3>Add New Payment</h3>
+                <form id="payment-form-element" onsubmit="savePayment(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payment-client">Client *</label>
+                            <select id="payment-client" required>
+                                <option value="">Select a client...</option>
+                                <!-- Populated by JavaScript -->
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="payment-date">Payment Date *</label>
+                            <input type="date" id="payment-date" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payment-package-type">Package Type</label>
+                            <input type="text" id="payment-package-type" placeholder="e.g., basic, plus, home visit">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="payment-hours-purchased">Hours Purchased *</label>
+                            <input type="number" id="payment-hours-purchased" step="0.5" min="0" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payment-amount-paid">Amount Paid</label>
+                            <input type="number" id="payment-amount-paid" step="0.01" min="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="payment-hourly-rate">Hourly Rate</label>
+                            <input type="number" id="payment-hourly-rate" step="0.01" min="0" placeholder="Auto-calculated">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payment-apply-tax">
+                                <input type="checkbox" id="payment-apply-tax" onchange="calculateTax()">
+                                Apply HST (13%)
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="payment-hst-amount">HST Amount</label>
+                            <input type="number" id="payment-hst-amount" step="0.01" min="0" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payment-total">Total Payment</label>
+                            <input type="number" id="payment-total" step="0.01" min="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="payment-status">Status *</label>
+                            <select id="payment-status" required>
+                                <option value="paid">Paid</option>
+                                <option value="owing">Owing</option>
+                                <option value="partial">Partial</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payment-method">Payment Method</label>
+                            <select id="payment-method">
+                                <option value="">Select...</option>
+                                <option value="cash">Cash</option>
+                                <option value="interac">Interac</option>
+                                <option value="check">Check</option>
+                                <option value="credit">Credit Card</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="payment-year">Year</label>
+                            <input type="number" id="payment-year" value="2026" min="2020" max="2030">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="payment-notes">Notes</label>
+                        <textarea id="payment-notes" rows="2"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Payment</button>
+                        <button type="button" class="btn btn-secondary" onclick="hidePaymentForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Payment Summary -->
+            <div class="summary-cards">
+                <div class="card">
+                    <div class="card-label">Total Revenue</div>
+                    <div class="card-value" id="payment-total-revenue">$0.00</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Total Hours Sold</div>
+                    <div class="card-value" id="payment-total-hours">0</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Outstanding</div>
+                    <div class="card-value" id="payment-outstanding">$0.00</div>
+                </div>
+            </div>
+
+            <!-- Payments Table -->
+            <div class="table-container">
+                <table id="payments-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Client</th>
+                            <th>Package</th>
+                            <th>Hours</th>
+                            <th>Amount</th>
+                            <th>HST</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="payments-tbody">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- LESSONS TAB -->
+        <!-- ============================================ -->
+        <div id="lessons-tab" class="tab-content">
+            <div class="section-header">
+                <h2>Lessons</h2>
+                <button class="btn btn-primary" onclick="showAddLessonForm()">
+                    + Add Lesson
+                </button>
+            </div>
+
+            <!-- Add Lesson Form -->
+            <div id="lesson-form" class="form-container hidden">
+                <h3>Add New Lesson</h3>
+                <form id="lesson-form-element" onsubmit="saveLesson(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lesson-client">Client *</label>
+                            <select id="lesson-client" required>
+                                <option value="">Select a client...</option>
+                                <!-- Populated by JavaScript -->
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lesson-date">Lesson Date *</label>
+                            <input type="date" id="lesson-date" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lesson-hours-taught">Hours Taught *</label>
+                            <input type="number" id="lesson-hours-taught" step="0.5" min="0.5" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lesson-teacher">Teacher *</label>
+                            <input type="text" id="lesson-teacher" value="Rahul" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lesson-topic">Lesson Topic *</label>
+                        <input type="text" id="lesson-topic" required placeholder="e.g., Excel Formulas, Internet Basics">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lesson-paid-or-probono">Type</label>
+                            <select id="lesson-paid-or-probono">
+                                <option value="paid">Paid</option>
+                                <option value="probono">Pro Bono</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lesson-paid-teacher">Teacher Paid Date</label>
+                            <input type="date" id="lesson-paid-teacher">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lesson-notes">Notes</label>
+                        <textarea id="lesson-notes" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Lesson</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideLessonForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Lesson Summary -->
+            <div class="summary-cards">
+                <div class="card">
+                    <div class="card-label">Total Lessons</div>
+                    <div class="card-value" id="lesson-count">0</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Total Hours Taught</div>
+                    <div class="card-value" id="lesson-total-hours">0</div>
+                </div>
+            </div>
+
+            <!-- Lessons Table -->
+            <div class="table-container">
+                <table id="lessons-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Client</th>
+                            <th>Hours</th>
+                            <th>Topic</th>
+                            <th>Teacher</th>
+                            <th>Type</th>
+                            <th>Teacher Paid</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lessons-tbody">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- REPORTS TAB -->
+        <!-- ============================================ -->
+        <div id="reports-tab" class="tab-content">
+            <div class="section-header">
+                <h2>Reports & Analytics</h2>
+            </div>
+
+            <!-- Report Cards -->
+            <div class="summary-cards">
+                <div class="card">
+                    <div class="card-label">Active Clients</div>
+                    <div class="card-value" id="report-active-clients">0</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Total Hours Purchased</div>
+                    <div class="card-value" id="report-hours-purchased">0</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Total Hours Used</div>
+                    <div class="card-value" id="report-hours-used">0</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Hours Remaining (All)</div>
+                    <div class="card-value" id="report-hours-remaining">0</div>
+                </div>
+            </div>
+
+            <!-- Lesson Activity Heatmap -->
+            <div class="form-container">
+                <div class="heatmap-header">
+                    <h3>📅 Lesson Activity</h3>
+                    <div class="heatmap-controls">
+                        <button class="heatmap-range-btn active" data-months="3">3 Months</button>
+                        <button class="heatmap-range-btn" data-months="6">6 Months</button>
+                        <button class="heatmap-range-btn" data-months="12">1 Year</button>
+                    </div>
+                </div>
+                <div id="lesson-heatmap" class="heatmap-container">
+                    <!-- Generated by JavaScript -->
+                </div>
+                <div class="heatmap-legend">
+                    <span class="legend-label">Less</span>
+                    <div class="legend-cell" data-level="0"></div>
+                    <div class="legend-cell" data-level="1"></div>
+                    <div class="legend-cell" data-level="2"></div>
+                    <div class="legend-cell" data-level="3"></div>
+                    <div class="legend-cell" data-level="4"></div>
+                    <span class="legend-label">More</span>
+                </div>
+            </div>
+
+            <!-- Detailed Reports -->
+            <div class="form-container">
+                <h3>Clients with Hours Remaining</h3>
+                <div class="table-container">
+                    <table id="report-hours-table">
+                        <thead>
+                            <tr>
+                                <th>UID</th>
+                                <th>Client Name</th>
+                                <th>Hours Purchased</th>
+                                <th>Hours Used</th>
+                                <th>Hours Remaining</th>
+                                <th>Last Lesson</th>
+                            </tr>
+                        </thead>
+                        <tbody id="report-hours-tbody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="form-container">
+                <h3>Revenue by Package Type</h3>
+                <div class="table-container">
+                    <table id="report-packages-table">
+                        <thead>
+                            <tr>
+                                <th>Package Type</th>
+                                <th>Sales Count</th>
+                                <th>Total Hours</th>
+                                <th>Total Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody id="report-packages-tbody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Supabase JS Client from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Load Configuration -->
+    <script src="config.js"></script>
+
+    <!-- Load Application Logic -->
+    <script src="app.js"></script>
+</body>
+</html>
