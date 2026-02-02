@@ -2,7 +2,7 @@
 
 **Project:** Computer tutoring business database migration from Google Sheets to Supabase with custom web interface
 
-**Status: 20/22 Complete**
+**Status: 24/26 Complete**
 
 ---
 
@@ -178,7 +178,37 @@ Migrate a computer tutoring business from 3 Google Sheets (Clients, Payments, Le
     - Set up custom domain (optional)
     - **Completed:** Deployed to Netlify with automatic GitHub integration and netlify.toml configuration
 
-22. [ ] **End-to-end testing & documentation**
+22. [x] **Implement authentication system** ✅
+    - Add Supabase Auth with email/password login
+    - Create login page with password reset functionality
+    - Protect all routes with authentication check
+    - Display user info and sign-out button
+    - Update RLS policies to require authentication
+    - **Completed:** Email/password auth implemented, 2 user accounts created, production-ready
+
+23. [x] **Apply MacBryte branding** ✅
+    - Implement official color scheme (orange #C55F44, purple #7B68EE, gold #F0B429)
+    - Add Outfit font from Google Fonts for headings
+    - Integrate official macbryte logo (black transparent PNG)
+    - Update all typography and button styles
+    - Center page title "Activity Logs"
+    - **Completed:** Full branding applied across login and main app
+
+24. [x] **Restructure Clients tab** ✅
+    - Change "Full Name" to "Full Name (student)"
+    - Add columns: Telephone #, Email, Address, Referred By
+    - Remove columns: Hours Purchased, Hours Used, Hours Remaining
+    - Update client form with new fields
+    - Reorder form layout for better UX
+    - **Completed:** Client table restructured, address field added to form
+
+25. [ ] **Add address column to database**
+    - Run SQL migration to add address column to clients table
+    - Test address field saves and displays correctly
+    - Verify existing clients show "-" for empty addresses
+    - **SQL:** ALTER TABLE clients ADD COLUMN IF NOT EXISTS address TEXT;
+
+26. [ ] **End-to-end testing & documentation**
     - Test all CRUD operations in production
     - Verify mobile functionality
     - Create user documentation in `docs/USAGE.md`

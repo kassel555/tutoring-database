@@ -282,3 +282,135 @@ Netlify: Connected via GitHub integration
 
 **Major Milestone:** Fully functional production application with real data! 🎉
 
+---
+
+## 2026-02-02 - Authentication, MacBryte Branding & UI Restructure
+
+### What Was Built
+- **Supabase Email/Password Authentication**
+  - Created login page (login.html) with email/password form
+  - Added authentication logic with password reset functionality
+  - Protected all routes with auth check (redirects unauthenticated users)
+  - Removed anonymous database access (updated RLS policies)
+  - User info display with sign-out button in header
+  - Created 2 user accounts for team access
+
+- **Complete MacBryte Branding Overhaul**
+  - Applied official color scheme: Orange (#C55F44), Purple (#7B68EE), Gold (#F0B429)
+  - Integrated Outfit font (bold geometric sans-serif) for all headings and buttons
+  - Added official macbryte logo (black transparent PNG with dot pattern)
+  - Updated login gradient from generic purple to MacBryte purple-to-orange
+  - Increased logo size 4x for stronger brand presence (60px → 240px)
+  - Changed all "MacBryte" text to lowercase "macbryte" for brand consistency
+
+- **UI Layout Improvements**
+  - Centered page title "Activity Logs" in header
+  - Restructured Clients tab with contact-focused columns
+  - More rounded corners (--radius-md: 0.75rem) for friendlier feel
+  - Tighter, more concise spacing throughout
+
+- **Clients Tab Restructure**
+  - Changed "Full Name" → "Full Name (student)"
+  - Added columns: Telephone #, Email, Address, Referred By
+  - Removed columns: Hours Purchased, Hours Used, Hours Remaining
+  - Updated client form with new Address field
+  - Reordered form fields for better UX flow
+
+### Technical Decisions
+- **Decision:** Supabase Auth instead of HTTP Basic Auth
+  - **Why:** Individual user accounts, password reset, user management dashboard, scalable
+  - **Alternatives Considered:** HTTP Basic Auth (simpler but single password), Netlify Identity (more complex)
+  - **Implementation:** Email provider enabled, 2 user accounts created, RLS updated to require authentication
+
+- **Decision:** Drop anonymous RLS policies
+  - **Why:** Force authentication for all database access, improve security
+  - **Implementation:** Executed DROP POLICY commands in Supabase SQL Editor
+  - **Result:** Auth required for all data access, existing authenticated policies still work
+
+- **Decision:** Official macbryte logo vs custom SVG
+  - **Why:** User provided actual logo file (2020-07_Logo-823-Lorin-Transparent-Black.png)
+  - **Implementation:** Copied from `/Volumes/ex_data_2tb/MASTER_ARCHIVE/Documents/Work/MacBryte/` to web folder
+  - **Result:** Professional, consistent branding across all pages
+
+- **Decision:** Remove hours columns from Clients tab
+  - **Why:** User requested contact-focused view instead of hours-focused
+  - **Implementation:** Updated renderClients() function, removed calculated summary display
+  - **Trade-off:** Hours data still calculated in background (for Reports tab), just not shown on Clients tab
+
+- **Decision:** Add Address field (not in database yet)
+  - **Why:** User requested it, prepared frontend for future database column
+  - **Implementation:** Form field added, shows "-" until database column created
+  - **Next Step:** Need to run `ALTER TABLE clients ADD COLUMN address TEXT;` in Supabase
+
+### Files Changed
+- `/web/login.html` - Created login page with email/password form
+- `/web/login.js` - Created authentication logic (sign in, password reset)
+- `/web/index.html` - Updated header (logo + centered title), restructured Clients table
+- `/web/app.js` - Added auth check, user display, updated renderClients() for new columns
+- `/web/styles.css` - Added 100+ lines (login styles, MacBryte colors, Outfit font, larger logo)
+- `/web/logo.png` - Added official macbryte logo (240x240px transparent PNG)
+- `/netlify.toml` - Updated for SPA routing
+- `/AUTH_SETUP.md` - Created comprehensive auth setup guide
+- `/BRANDING_GUIDE.md` - Created branding customization guide
+- `/PRD.md` - Updated status to 24/26 complete
+
+### Bugs Fixed / Issues Resolved
+1. **Issue:** Need authentication for multi-user access
+   - **Solution:** Implemented Supabase Auth with email/password, created 2 accounts
+
+2. **Issue:** Generic blue branding doesn't match MacBryte website
+   - **Solution:** Applied official colors, fonts, and logo from macbryte.com
+
+3. **Issue:** Logo too small (60px)
+   - **Solution:** Increased to 240px (4x) for stronger brand presence
+
+4. **Issue:** "MacBryte" capitalization inconsistent with brand
+   - **Solution:** Changed all instances to lowercase "macbryte"
+
+### Supabase Configuration Changes
+```sql
+-- Removed anonymous access
+DROP POLICY "Allow anon users full access to clients" ON clients;
+DROP POLICY "Allow anon users full access to payments" ON payments;
+DROP POLICY "Allow anon users full access to lessons" ON lessons;
+
+-- Authenticated users still have full access via existing policies
+-- Email auth provider enabled in Supabase dashboard
+```
+
+### Design System Changes
+```css
+/* MacBryte Color Palette */
+--primary: #C55F44;        /* Orange/rust - buttons, tabs */
+--accent-purple: #7B68EE;  /* Purple - accents */
+--accent-gold: #F0B429;    /* Gold - highlights */
+
+/* Typography */
+--font-heading: 'Outfit', sans-serif;  /* Bold geometric font */
+
+/* Border Radius */
+--radius-md: 0.75rem;  /* More rounded, friendlier */
+--radius-lg: 1rem;
+```
+
+### Known Issues / Tech Debt
+- [ ] **Address column missing from database** - Need to run: `ALTER TABLE clients ADD COLUMN address TEXT;`
+- [ ] Hours data still calculated but not displayed on Clients tab (intentional, but could add toggle)
+- [ ] Consider adding role-based permissions (all users currently have admin access)
+- [ ] Login page gradient could match macbryte.com more closely
+
+### Context for Next Session
+- **Authentication is LIVE** - 2 users can log in, database is protected
+- **MacBryte branding complete** - Colors, fonts, logo all matching official brand
+- **Clients tab restructured** - Contact-focused instead of hours-focused
+- **Next Priority:** Add address column to Supabase database
+- **Remaining Tasks:**
+  - Task 25: Add address column migration
+  - Task 26: End-to-end testing & documentation
+- **Production Status:** Fully functional with authentication, ready for team use
+
+**Gotchas to Remember:**
+- Address field won't save until database column is added
+- All users have full admin access (no role-based permissions yet)
+- Login URL: https://tutoring-mb.netlify.app (redirects to login.html)
+
