@@ -2,7 +2,9 @@
   publish = "web"
   command = "echo 'No build needed - static site'"
 
+# SPA routing - serve HTML files without redirecting
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+  force = false

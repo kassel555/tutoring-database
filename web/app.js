@@ -22,13 +22,53 @@ let currentClientId = null;
 let clientSummaries = {}; // Cache for calculated client data
 
 // ============================================================================
+// Authentication Check
+// ============================================================================
+
+async function checkAuth() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+        // Not logged in - redirect to login page
+        window.location.href = 'login.html';
+        return null;
+    }
+
+    return session;
+}
+
+function displayUserInfo(user) {
+    const header = document.querySelector('header');
+    const userInfo = document.createElement('div');
+    userInfo.className = 'user-info';
+    userInfo.innerHTML = `
+        <span>👤 ${user.email}</span>
+        <button id="sign-out-btn" class="btn-secondary">Sign Out</button>
+    `;
+    header.appendChild(userInfo);
+
+    document.getElementById('sign-out-btn').addEventListener('click', async () => {
+        await supabaseClient.auth.signOut();
+        window.location.href = 'login.html';
+    });
+}
+
+// ============================================================================
 // Initialization
 // ============================================================================
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Check authentication first
+    const session = await checkAuth();
+    if (!session) return; // Redirecting to login
+
+    // Continue with normal app initialization
     setupTabNavigation();
     setTodayAsDefault();
     await loadAllData();
+
+    // Show user info in header
+    displayUserInfo(session.user);
 });
 
 function setupTabNavigation() {
