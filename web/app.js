@@ -205,7 +205,7 @@ function renderClients() {
     if (!tbody) return;
 
     if (clients.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="empty-state">No clients found. Add your first client!</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="10" class="empty-state">No clients found. Add your first client!</td></tr>';
         return;
     }
 
@@ -214,17 +214,15 @@ function renderClients() {
             totalPurchased: 0, totalUsed: 0, remaining: 0, lastLesson: null
         };
 
-        const remainingClass = summary.remaining < 0 ? 'text-error' :
-                              summary.remaining > 0 ? 'text-success' : '';
-
         return `
             <tr>
                 <td><strong>${escapeHtml(client.uid)}</strong></td>
                 <td>${escapeHtml(client.full_name)}</td>
+                <td>${escapeHtml(client.telephone || '-')}</td>
+                <td>${escapeHtml(client.email || '-')}</td>
+                <td>${escapeHtml(client.address || '-')}</td>
+                <td>${escapeHtml(client.lead_source || '-')}</td>
                 <td><span class="status-badge status-${client.status}">${client.status}</span></td>
-                <td>${summary.totalPurchased.toFixed(1)}h</td>
-                <td>${summary.totalUsed.toFixed(1)}h</td>
-                <td class="${remainingClass}"><strong>${summary.remaining.toFixed(1)}h</strong></td>
                 <td>${formatDate(summary.lastLesson)}</td>
                 <td>${escapeHtml(client.teacher || '-')}</td>
                 <td>
@@ -258,11 +256,12 @@ async function saveClient(event) {
     const clientData = {
         uid: document.getElementById('client-uid').value.toUpperCase(),
         full_name: document.getElementById('client-full-name').value,
-        email: document.getElementById('client-email').value || null,
         telephone: document.getElementById('client-telephone').value || null,
+        email: document.getElementById('client-email').value || null,
+        address: document.getElementById('client-address').value || null,
+        lead_source: document.getElementById('client-lead-source').value || null,
         status: document.getElementById('client-status').value,
         teacher: document.getElementById('client-teacher').value || null,
-        lead_source: document.getElementById('client-lead-source').value || null,
         notes: document.getElementById('client-notes').value || null
     };
 
@@ -302,11 +301,12 @@ async function editClient(clientId) {
     document.getElementById('client-id').value = clientId;
     document.getElementById('client-uid').value = client.uid;
     document.getElementById('client-full-name').value = client.full_name;
-    document.getElementById('client-email').value = client.email || '';
     document.getElementById('client-telephone').value = client.telephone || '';
+    document.getElementById('client-email').value = client.email || '';
+    document.getElementById('client-address').value = client.address || '';
+    document.getElementById('client-lead-source').value = client.lead_source || '';
     document.getElementById('client-status').value = client.status;
     document.getElementById('client-teacher').value = client.teacher || '';
-    document.getElementById('client-lead-source').value = client.lead_source || '';
     document.getElementById('client-notes').value = client.notes || '';
     document.getElementById('client-form').classList.remove('hidden');
 }
