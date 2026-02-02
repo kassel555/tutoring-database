@@ -65,27 +65,46 @@ body {
 .container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
 }
 
 header {
     background: var(--bg-primary);
     border-radius: var(--radius-lg);
-    padding: var(--spacing-xl);
+    padding: var(--spacing-lg) var(--spacing-xl);
     margin-bottom: var(--spacing-lg);
     box-shadow: var(--shadow-sm);
-    text-align: center;
 }
 
-header h1 {
-    font-size: 2rem;
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.header-logo {
+    flex-shrink: 0;
+}
+
+.header-logo .logo {
+    height: 60px;
+    width: auto;
+    display: block;
+}
+
+.header-text {
+    flex: 1;
+}
+
+.header-text h1 {
+    font-size: 1.75rem;
     font-weight: 700;
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
 }
 
 .subtitle {
     color: var(--text-secondary);
-    font-size: 1rem;
+    font-size: 0.95rem;
 }
 
 /* ============================================================================
@@ -324,6 +343,7 @@ header h1 {
 table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: auto;
 }
 
 thead {
@@ -331,16 +351,25 @@ thead {
 }
 
 thead th {
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
     text-align: left;
     font-weight: 600;
     color: var(--text-primary);
     border-bottom: 2px solid var(--border);
+    white-space: nowrap;
 }
 
 tbody td {
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
     border-bottom: 1px solid var(--border);
+}
+
+/* Auto-fit date columns and prevent wrapping */
+tbody td:has(input[type="date"]),
+thead th:first-child,
+tbody td:first-child {
+    white-space: nowrap;
+    width: 1%;
 }
 
 tbody tr:hover {
@@ -740,22 +769,34 @@ tbody tr:last-child td {
 .login-card {
     background: white;
     border-radius: 12px;
-    padding: 48px 40px;
-    max-width: 400px;
+    padding: 40px;
+    max-width: 420px;
     width: 100%;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.login-logo {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.login-logo .logo {
+    height: 70px;
+    width: auto;
 }
 
 .login-card h1 {
     text-align: center;
     margin-bottom: 8px;
     color: #2d3748;
+    font-size: 1.75rem;
 }
 
 .login-card .subtitle {
     text-align: center;
     color: #718096;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
+    font-size: 0.95rem;
 }
 
 .login-form .form-group {
@@ -810,20 +851,20 @@ tbody tr:last-child td {
 .user-info {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-top: 12px;
-    padding-top: 12px;
+    gap: 12px;
+    margin-top: 8px;
+    padding-top: 8px;
     border-top: 1px solid #e2e8f0;
 }
 
 .user-info span {
-    font-size: 14px;
+    font-size: 13px;
     color: #4a5568;
 }
 
 .user-info button {
-    padding: 6px 12px;
-    font-size: 13px;
+    padding: 4px 10px;
+    font-size: 12px;
 }
 
 /* ============================================================================
