@@ -82,7 +82,9 @@ header {
 .header-content {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: var(--spacing-lg);
+    position: relative;
 }
 
 .header-logo {
@@ -96,14 +98,17 @@ header {
 }
 
 .header-text {
-    flex: 1;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .header-text h1 {
     font-family: var(--font-heading);
-    font-size: 1.75rem;
+    font-size: 2.5rem;
     font-weight: 800;
-    margin-bottom: var(--spacing-xs);
+    margin: 0;
+    white-space: nowrap;
 }
 
 .subtitle {
