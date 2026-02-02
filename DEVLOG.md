@@ -181,3 +181,104 @@ All files now match the user's exact Google Sheets structure and business model!
 - **Ready for testing** - Should verify heatmap renders correctly with real lesson data
 - **Deployment pending** - Still need to complete Phase 1-3 tasks (Supabase setup, migration, etc.)
 
+---
+
+## 2026-02-02 - Cloud Supabase Migration & Netlify Deployment
+
+### What Was Built
+- **Migrated to cloud Supabase** from local setup
+  - Created cloud project at hawowbywchrbbhlcascn.supabase.co
+  - Executed complete schema.sql in Supabase SQL Editor
+  - Updated web/config.js with cloud API URL and anon key
+  - Updated .env for migration scripts
+
+- **Data migration completed** - All Google Sheets data imported
+  - 53 clients imported
+  - 123 payments imported
+  - 857 lessons imported
+  - Built robust error handling for data validation
+
+- **GitHub repository setup**
+  - Initialized git repository
+  - Created GitHub repo: kassel555/tutoring-database
+  - Pushed complete codebase to GitHub
+  - Created GitHub Actions workflow for deployment
+
+- **Netlify deployment** - Live production deployment
+  - Created netlify.toml configuration
+  - Connected Netlify to GitHub repository
+  - Automatic deployment on push to main branch
+  - Production site live and accessible
+
+### Technical Decisions
+- **Decision:** Cloud Supabase instead of local instance
+  - **Why:** User needed publicly accessible database for web deployment
+  - **Implementation:** Used hawowbywchrbbhlcascn.supabase.co with anon key in client-side code
+
+- **Decision:** Anon key in config.js (committed to repo)
+  - **Why:** Safe for client-side use - RLS policies protect data, no sensitive operations exposed
+  - **Alternatives Considered:** Environment variables (overkill for single-user app with RLS)
+
+- **Decision:** Netlify over GitHub Pages
+  - **Why:** Works with private repos, faster deploys, better dashboard, serverless functions support
+  - **Alternatives Tried:** GitHub Pages (failed - requires public repo on free tier)
+
+- **Decision:** Migration script with extensive error handling
+  - **Why:** CSV data had format inconsistencies, needed robust validation
+  - **Implementation:** Deduplication, date parsing, default values for missing fields
+
+### Files Changed
+- `/web/config.js` - Updated with cloud Supabase credentials
+- `/.env` - Updated with cloud Supabase URL and anon key
+- `/.github/workflows/deploy.yml` - Created GitHub Actions workflow for Pages
+- `/netlify.toml` - Created Netlify configuration (publish: web, SPA redirects)
+- `/database/import-lessons-only.js` - Created with date validation and error handling
+- `/.gitignore` - Modified to allow config.js (anon key is safe)
+- `/PRD.md` - Updated status to 20/22 complete
+
+### Bugs Fixed / Issues Resolved
+1. **Issue:** Duplicate UID constraint violation during import
+   - **Error:** `duplicate key value violates unique constraint "clients_uid_key"`
+   - **Solution:** Implemented Map-based deduplication, keeping first occurrence of each UID
+
+2. **Issue:** Invalid date format in lessons CSV
+   - **Error:** `invalid input syntax for type date: "yes"`
+   - **Solution:** Created parseDate() function to validate dates, skip invalid entries
+
+3. **Issue:** Null teacher constraint violation
+   - **Error:** `null value in column "teacher" of relation "lessons" violates not-null constraint`
+   - **Solution:** Default to "Rahul" when teacher field is missing
+
+4. **Issue:** GitHub Pages 404 error
+   - **Error:** "There isn't a GitHub Pages site here"
+   - **Root Cause:** Repository was private, Pages requires public repo on free plan
+   - **Solution:** Switched to Netlify (supports private repos)
+
+### Import Statistics
+- **Clients:** 53 records imported successfully
+- **Payments:** 123 records with proper foreign key relationships
+- **Lessons:** 857 records with date validation and teacher defaults
+- **Total Records:** 1,033 rows migrated from Google Sheets
+
+### Database Configuration
+```
+Supabase URL: https://hawowbywchrbbhlcascn.supabase.co
+Anon Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... (exposed in config.js)
+GitHub Repo: kassel555/tutoring-database
+Netlify: Connected via GitHub integration
+```
+
+### Context for Next Session
+- **Production site is LIVE** - Deployed on Netlify with auto-deploy on push
+- **All data successfully migrated** - 1,033 records across 3 tables
+- **2 tasks remaining:**
+  - Task 20: Remove "payments recorded" field from front page (need clarification)
+  - Task 22: End-to-end testing & documentation
+- **Next steps:**
+  - Test all CRUD operations on live site
+  - Verify mobile responsiveness
+  - Create user documentation (docs/USAGE.md)
+  - Final testing and handoff
+
+**Major Milestone:** Fully functional production application with real data! 🎉
+

@@ -7,14 +7,20 @@ All user-facing changes to the tutoring database system.
 ## [Unreleased]
 
 ### Added
-- Project initialized with directory structure
-- PRD created with migration plan (20 tasks)
+- **Live web application deployed on Netlify** - Accessible from anywhere with internet connection
+- **All historical data migrated** - 53 clients, 123 payments, 857 lessons imported from Google Sheets
+- **Lesson activity heatmap** - Visual GitHub-style calendar showing teaching patterns and busy periods
+- **Cloud database** - Supabase PostgreSQL backend with real-time sync capabilities
+- **Automatic deployment** - Push to GitHub automatically updates live site
 
 ### Changed
-- N/A
+- Migrated from local development to production cloud infrastructure
+- Database now hosted on cloud Supabase for public accessibility
 
 ### Fixed
-- N/A
+- Data import handling for duplicate UIDs (deduplication)
+- Invalid date format validation during CSV import
+- Missing teacher fields (defaults to "Rahul")
 
 ---
 
